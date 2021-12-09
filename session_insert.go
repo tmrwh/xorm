@@ -69,10 +69,10 @@ func (session *Session) Insert(beans ...interface{}) (int64, error) {
 		default:
 			sliceValue := reflect.Indirect(reflect.ValueOf(bean))
 			if sliceValue.Kind() == reflect.Slice {
-				//size := sliceValue.Len()
-				//if size <= 0 {
-				//	return 0, ErrNoElementsOnSlice
-				//}
+				size := sliceValue.Len()
+				if size <= 0 {
+					return 0, nil
+				}
 
 				cnt, err := session.innerInsertMulti(bean)
 				if err != nil {
@@ -268,9 +268,9 @@ func (session *Session) InsertMulti(rowsSlicePtr interface{}) (int64, error) {
 		return 0, ErrPtrSliceType
 	}
 
-	//if sliceValue.Len() <= 0 {
-	//	return 0, ErrNoElementsOnSlice
-	//}
+	if sliceValue.Len() <= 0 {
+		return 0, nil
+	}
 
 	return session.innerInsertMulti(rowsSlicePtr)
 }
